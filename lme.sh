@@ -103,9 +103,47 @@ while true; do
             # Add software installation logic here
             ;;
         4)
-            echo "Sending host-master..."
-            # Add host-master sending logic here
-            ;;
+        echo "Sending host-master..."
+
+        # Read the configuration from config.txt
+        config_file="config.txt"
+        if [ -f "$config_file" ]; then
+            hostMasterAdress=$(jq -r '.hostMasterAdress' "$config_file")
+
+            if [ -n "$hostMasterAdress" ]; then
+                echo "Enter your username for the server: "
+                read server_username
+                echo "Enter your password for the server: "
+                read -s server_password
+
+                # Execute the commands and save output to the specified text file
+                sshpass -p "$server_password" ssh "$server_username"@"$hostMasterAdress" "
+                    echo 'Computer Name : $(hostname)'
+                    echo 'Manufacturer : Apple'
+                    echo 'Serial Number : $(system_profiler SPHardwareDataType | awk \'/Serial/ {print \$4}\')'
+                    echo 'Operating System : \$(sw_vers -productName) \$(sw_vers -productVersion)'
+                    echo 'Mac Address : \$(ifconfig en0 | awk \'/ether/{print \$2}\')'
+                    echo 'Computer Model : \$(sysctl -n hw.model)'
+                    echo 'RAM : \$(sysctl -n hw.memsize | awk \'{print \$0/1024/1024/1024 \" GB\"}\')'
+                    echo 'Disk : \$(df -h / | awk \'/\\// {print \$2}\')'
+                    teamviewer_id=\$(teamviewer --info 2>/dev/null | awk '/TeamViewer ID:/{print \$NF}')
+                    if [ -n \"\$teamviewer_id\" ]; then
+                        echo \"Teamviewer ID : \$teamviewer_id\"
+                    else
+                        echo \"Teamviewer ID : Not installed or corrupted\"
+                    fi
+                " > "$hostMasterAdress"
+                
+                echo "Hostmaster information has been saved to $hostMasterAdress"
+            else
+                echo "hostMasterAdress is not specified in the configuration file."
+            fi
+        else
+            echo "Config file not found. Please remove the script and redownload it!!"
+        fi
+        ;;
+
+
         0)
             echo "Exiting..."
             exit 0
