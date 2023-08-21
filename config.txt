@@ -1,4 +1,2 @@
-{
-    "form_url" : "enter-your-google-form-url",
-    "appWebsite" : "enter-your-app-website-apps.json file"
-}
+"form_url" : "enter-your-google-form-url"
+"appWebsite" : "enter-your-app-website-apps.json file"

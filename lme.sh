@@ -103,15 +103,16 @@ while true; do
             # Add software installation logic here
             ;;
     4)
+            # Send host-master
             echo "Sending host-master..."
 
             # Read form_url from config.txt
             config_file="config.txt"
             if [ -f "$config_file" ]; then
-                form_url=$(jq -r '.form_url' "$config_file")
+            form_url=$(grep -E '^"form_url"' "$config_file" | cut -d: -f2 | tr -d '" ')  
             else
-                echo "Config file 'config.txt' not found or malformed."
-                exit 1
+            echo "Config file 'config.txt' not found."
+            exit 1
             fi
 
         # Collecting information
