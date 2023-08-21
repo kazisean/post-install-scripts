@@ -1,4 +1,4 @@
 {
-    "hostMasterAdress" : "enter-your-server-txt-file-adress.txt",
+    "form_url" : "enter-your-google-form-url",
     "appWebsite" : "enter-your-app-website-apps.json file"
 }

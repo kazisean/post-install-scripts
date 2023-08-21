@@ -102,51 +102,43 @@ while true; do
             echo "Installing new software..."
             # Add software installation logic here
             ;;
-    4)
-        echo "Sending host-master..."
-            computer_name=$(hostname)
-            config_file="config.txt"
-
-            if [ -f "$config_file" ]; then
-                # Read hostMasterAdress and ShareName from config.txt
-                hostMasterAdress=$(grep -o '"hostMasterAdress" : "[^"]*' "$config_file" | cut -d '"' -f 4)
-                shareName=$(grep -o '"ShareName" : "[^"]*' "$config_file" | cut -d '"' -f 4)
-
-                if [ -n "$hostMasterAdress" ] && [ -n "$shareName" ]; then
-                    # Prompt user for server username and password
-                    read -p "Enter your server username: " server_username
-                    read -s -p "Enter your server password:  " server_password
-                    echo
-
-                    # Construct the data to be sent
-                    data=$(cat <<EOT
-{
-    "computerName": "$(hostname)",
-    "manufacturer": "Apple",
-    "serialNumber": "$(system_profiler SPHardwareDataType | awk '/Serial/ {print $4}')",
-    "operatingSystem": "$(sw_vers -productName) $(sw_vers -productVersion)",
-    "macAddress": "$(ifconfig en0 | awk '/ether/{print $2}')",
-    "computerModel": "$(sysctl -n hw.model)",
-    "ram": "$(sysctl -n hw.memsize | awk '{print $0/1024/1024/1024 " GB"}')",
-    "disk": "$(df -h / | awk '/\// {print $2}')"
-}
-EOT
-                    )
-
-                    # Send data to the server using curl
-                    curl_command="curl -X POST -u $server_username:$server_password -H 'Content-Type: application/json' -d '$data' $hostMasterAdress/$shareName"
-                    response=$(eval "$curl_command")
-
-                    echo "Response from server: $response"
-                else
-                    echo "hostMasterAdress or ShareName is not specified in the configuration file."
-                fi
-            else
-                echo "Config file not found. Please redownload the scripts!!"
-            fi
             ;;
+    4)
+            echo "Sending host-master..."
 
+            # Read form_url from config.txt
+            config_file="config.txt"
+            if [ -f "$config_file" ]; then
+                form_url=$(jq -r '.form_url' "$config_file")
+            else
+                echo "Config file 'config.txt' not found or malformed."
+                exit 1
+            fi
 
+        # Collecting information
+            computer_name=$(hostname)
+            manufacturer="Apple"
+            serial_number=$(system_profiler SPHardwareDataType | awk '/Serial/ {print $4}')
+            os=$(sw_vers -productName) $(sw_vers -productVersion)
+            mac_address=$(ifconfig en0 | awk '/ether/{print $2}')
+            computer_model=$(sysctl -n hw.model)
+            ram=$(sysctl -n hw.memsize | awk '{print $0/1024/1024/1024 " GB"}')
+            disk=$(df -h / | awk '/\// {print $2}')
+            teamviewer_id=$(teamviewer --info 2>/dev/null | awk '/TeamViewer ID:/{print $NF}')
+            if [ -n "$teamviewer_id" ]; then
+                teamviewer_info="Teamviewer ID : $teamviewer_id"
+            else
+                teamviewer_info="Teamviewer ID : Not installed or corrupted"
+            fi
+            
+            # Constructing data for the Google Form
+            data="entry.699254382=$computer_name&entry.2138566546=$manufacturer&entry.-1849484556=$serial_number&entry.1348721493=$os&entry.-1168987738=$mac_address&entry.2105787087=$computer_model&entry.-537334872=$ram&entry.819986346=$disk&entry.2009743612=$teamviewer_info"
+            
+            # Sending data using curl
+            curl -s -d "$data" "$form_url" > /dev/null
+            
+            echo "Host-master data sent successfully!"
+                ;;
         0)
             echo "Exiting..."
             exit 0
