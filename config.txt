@@ -1,2 +1,2 @@
-"form_url" : "enter-your-google-form-url"
-"appWebsite" : "enter-your-app-website-apps.json file"
+slack-WEBHOOK_URL : "enter-slack-webhook.url",
+appWebsite : "enter-your-app-website-apps.json file"

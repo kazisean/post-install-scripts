@@ -106,36 +106,33 @@ while true; do
             # Send host-master
             echo "Sending host-master..."
 
-            # Read form_url from config.txt
-            config_file="config.txt"
-            if [ -f "$config_file" ]; then
-            form_url=$(grep -E '^"form_url"' "$config_file" | cut -d: -f2 | tr -d '" ')  
-            else
-            echo "Config file 'config.txt' not found."
-            exit 1
-            fi
+          # Read config file
+            source config.txt
 
-        # Collecting information
-            computer_name=$(hostname)
+            # Get Slack webhook URL
+            slack_url=$slack-WEBHOOK_URL
+
+            # Get system information
+            hostname=$(hostname)
             manufacturer="Apple"
             serial_number=$(system_profiler SPHardwareDataType | awk '/Serial/ {print $4}')
-            os=$(sw_vers -productName) $(sw_vers -productVersion)
+            os_name=$(sw_vers -productName)
+            os_version=$(sw_vers -productVersion)
             mac_address=$(ifconfig en0 | awk '/ether/{print $2}')
-            computer_model=$(sysctl -n hw.model)
+            model=$(sysctl -n hw.model)
             ram=$(sysctl -n hw.memsize | awk '{print $0/1024/1024/1024 " GB"}')
             disk=$(df -h / | awk '/\// {print $2}')
             teamviewer_id=$(teamviewer --info 2>/dev/null | awk '/TeamViewer ID:/{print $NF}')
             if [ -n "$teamviewer_id" ]; then
-                teamviewer_info="Teamviewer ID : $teamviewer_id"
+            echo "Teamviewer ID : $teamviewer_id"
             else
-                teamviewer_info="Teamviewer ID : Not installed or corrupted"
+            echo "Teamviewer ID : Not installed or corrupted"
             fi
-            
-            # Constructing data for the Google Form
-            data="entry.699254382=$computer_name&entry.2138566546=$manufacturer&entry.-1849484556=$serial_number&entry.1348721493=$os&entry.-1168987738=$mac_address&entry.2105787087=$computer_model&entry.-537334872=$ram&entry.819986346=$disk&entry.2009743612=$teamviewer_info"
-            
-            # Sending data using curl
-            curl -s -d "$data" "$form_url" > /dev/null
+
+            # Send to Slack
+            curl -X POST -H 'Content-type: application/json' \
+            --data '{"text":"Computer Name : '"$hostname"' Manufacturer : '"$manufacturer"' Serial Number : '"$serial_number"' Operating System : '"$os_name"' '"$os_version"' Mac Address : '"$mac_address"' Computer Model : '"$model"' RAM : '"$ram"' Disk : '"$disk"' '"$teamviewer_id"'"}' \
+            $slack_url
             
             echo "Host-master data sent successfully!"
                 ;;
