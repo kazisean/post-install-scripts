@@ -1,0 +1,17 @@
+remote_commands=$(cat <<EOT
+                echo 'Computer Name : \$(hostname)'
+                echo 'Manufacturer : Apple'
+                echo 'Serial Number : \$(system_profiler SPHardwareDataType | awk "/Serial/ {print \\\$4}")'
+                echo 'Operating System : \$(sw_vers -productName) \$(sw_vers -productVersion)'
+                echo 'Mac Address : \$(ifconfig en0 | awk "/ether/{print \\\$2}")'
+                echo 'Computer Model : \$(sysctl -n hw.model)'
+                echo 'RAM : \$(sysctl -n hw.memsize | awk "{print \\\$0/1024/1024/1024 \\" GB\\"}")'
+                echo 'Disk : \$(df -h / | awk "/\\// {print \\\$2}")'
+                teamviewer_id=\$(teamviewer --info 2>/dev/null | awk '/TeamViewer ID:/{print \\\$NF}')
+                if [ -n "\\\$teamviewer_id" ]; then
+                    echo "Teamviewer ID : \\\$teamviewer_id"
+                else
+                    echo "Teamviewer ID : Not installed or corrupted"
+                fi
+EOT
+            )

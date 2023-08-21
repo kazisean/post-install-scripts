@@ -113,14 +113,15 @@ while true; do
         hostMasterAdress=$(grep -o '"hostMasterAdress" : "[^"]*' "$config_file" | cut -d '"' -f 4)
 
         if [ -n "$hostMasterAdress" ]; then
-            # Prompt user for server username
+            # Prompt user for server username and password
             read -p "Enter your server username: " server_username
+            read -s -p "Enter your server password: " server_password
+            echo
 
-            # Use SSH key pair for authentication
-            ssh_command="ssh $server_username@$hostMasterAdress"
+            # Construct and execute smbclient commands
+            smbclient_command="smbclient //$hostMasterAdress/$(grep -o '"ShareName" : "[^"]*' "$config_file" | cut -d '"' -f 4) -U $server_username%$server_password -c"
 
-            # Construct and execute remote commands
-            remote_commands=$(cat <<EOT
+           remote_commands=$(cat <<EOT
                 echo 'Computer Name : \$(hostname)'
                 echo 'Manufacturer : Apple'
                 echo 'Serial Number : \$(system_profiler SPHardwareDataType | awk "/Serial/ {print \\\$4}")'
@@ -139,15 +140,15 @@ EOT
             )
 
             # Execute remote commands and save output to output.txt
-            $ssh_command "$remote_commands" > "$output_file"
+            echo "$remote_commands" | $smbclient_command > "$output_file"
 
             echo "Host Master information has been saved to $output_file"
 
-        # Delete the hostmaster file from the local computer if exist
-        if [ -f "$output_file" ]; then
-            rm "$output_file"
-            echo "Host Master file $output_file has been deleted from the local computer."
-        fi
+            # Delete the hostmaster file from the local computer if exist
+            if [ -f "$output_file" ]; then
+                rm "$output_file"
+                echo "Host Master file $output_file has been deleted from the local computer."
+            fi
         else
             echo "hostMasterAdress is not specified in the configuration file."
         fi
