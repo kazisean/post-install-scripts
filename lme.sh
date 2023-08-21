@@ -19,7 +19,7 @@ fi
 
 # Display the ASCII art banner
 cat << "EOF"
-                     ______                     
+                         ______                     
  _________        .---"""      """---.              
 :______.-':      :  .--------------.  :             
 | ______  |      | :                : |             
@@ -39,15 +39,20 @@ cat << "EOF"
               :____________________________:"
 EOF
 
+echo "  " 
+echo "  " 
+echo "  " 
 
 # Display main menu
 while true; do
+    echo "  " 
     echo "Lan Made Easy - Main Menu"
     echo "1) Check computer info"
     echo "2) Check for updates"
     echo "3) Install new software"
     echo "4) Send host-master"
     echo "0) Exit"
+    echo "  " 
 
     read -p "Enter your choice: " choice
 
@@ -69,9 +74,30 @@ while true; do
             fi
             ;;
         2)
-            echo "Checking for updates..."
-            # Add update check logic here
-            ;;
+    echo "Checking for updates..."
+    
+    if [ "$mac" = true ]; then
+        # Run macOS update with a progress bar
+        softwareupdate -i -a | while read -r line; do
+            echo "$line"
+            if [[ "$line" =~ "PercentComplete" ]]; then
+                percent=$(echo "$line" | awk -F 'PercentComplete = ' '{print $2}' | tr -d ';')
+                num_hashes=$((percent / 10))
+                hashes=$(printf "%-${num_hashes}s" "#")
+                spaces=$(printf "%-$((10 - num_hashes))s" " ")
+                echo -ne "Progress: [$hashes$spaces] $percent%\r"
+            fi
+            if [[ "$line" =~ "Install of" ]]; then
+                echo -e "\nUpdate complete."
+                # Display current macOS version after it is done updating
+                echo "Current macOS version: $(sw_vers -productName) $(sw_vers -productVersion)"
+                break
+            fi
+        done
+    else
+        echo "This feature is available only on macOS."
+    fi
+      ;;
         3)
             echo "Installing new software..."
             # Add software installation logic here
