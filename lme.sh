@@ -77,27 +77,27 @@ while true; do
     echo "Checking for updates..."
     
     if [ "$mac" = true ]; then
-        # Run macOS update with a progress bar
-        softwareupdate -i -a | while read -r line; do
-            echo "$line"
-            if [[ "$line" =~ "PercentComplete" ]]; then
-                percent=$(echo "$line" | awk -F 'PercentComplete = ' '{print $2}' | tr -d ';')
-                num_hashes=$((percent / 10))
-                hashes=$(printf "%-${num_hashes}s" "#")
-                spaces=$(printf "%-$((10 - num_hashes))s" " ")
-                echo -ne "Progress: [$hashes$spaces] $percent%\r"
-            fi
-            if [[ "$line" =~ "Install of" ]]; then
-                echo -e "\nUpdate complete."
-                # Display current macOS version after it is done updating
-                echo "Current macOS version: $(sw_vers -productName) $(sw_vers -productVersion)"
-                break
-            fi
-        done
+        # Check for updates
+        update_output=$(softwareupdate -l 2>&1)
+        
+        # Check if already up-to-date
+        if [[ $update_output == *"No new software available"* ]]; then
+            echo "Your macOS is already up to date."
+        else
+            echo "Updating macOS..."
+            echo " "
+            echo "Now go to Settings -> General -> Software Update "
+            softwareupdate -i -a
+            echo "Update completed."
+            # Display current macOS version
+            echo "Current macOS version: $(sw_vers -productName) $(sw_vers -productVersion)"
+        fi
     else
         echo "This feature is available only on macOS."
     fi
-      ;;
+    ;;
+
+      
         3)
             echo "Installing new software..."
             # Add software installation logic here
