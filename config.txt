@@ -1,4 +1,4 @@
 {
-    "hostMasterAdress" : "enter-your-server-txt-file.txt",
+    "hostMasterAdress" : "enter-your-server-txt-file-adress.txt",
     "appWebsite" : "enter-your-app-website-apps.json file"
 }

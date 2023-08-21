@@ -104,39 +104,50 @@ while true; do
             ;;
     4)
         echo "Sending host-master..."
-
+    computer_name=$(hostname)
     config_file="config.txt"
-    output_file="output.txt"
+    output_file="hostmaster-$computer_name.txt"
 
     if [ -f "$config_file" ]; then
         # Read hostMasterAdress from config.txt
         hostMasterAdress=$(grep -o '"hostMasterAdress" : "[^"]*' "$config_file" | cut -d '"' -f 4)
 
         if [ -n "$hostMasterAdress" ]; then
-            # Prompt user for server login credentials
+            # Prompt user for server username
             read -p "Enter your server username: " server_username
-            read -s -p "Enter your server password: " server_password
-            echo
 
-            # Execute commands remote server and save output to output.txt
-            sshpass -p "$server_password" ssh "$server_username"@"$hostMasterAdress" "
+            # Use SSH key pair for authentication
+            ssh_command="ssh $server_username@$hostMasterAdress"
+
+            # Construct and execute remote commands
+            remote_commands=$(cat <<EOT
                 echo 'Computer Name : \$(hostname)'
                 echo 'Manufacturer : Apple'
-                echo 'Serial Number : \$(system_profiler SPHardwareDataType | awk \'/Serial/ {print \$4}\')'
+                echo 'Serial Number : \$(system_profiler SPHardwareDataType | awk "/Serial/ {print \\\$4}")'
                 echo 'Operating System : \$(sw_vers -productName) \$(sw_vers -productVersion)'
-                echo 'Mac Address : \$(ifconfig en0 | awk \'/ether/{print \$2}\')'
+                echo 'Mac Address : \$(ifconfig en0 | awk "/ether/{print \\\$2}")'
                 echo 'Computer Model : \$(sysctl -n hw.model)'
-                echo 'RAM : \$(sysctl -n hw.memsize | awk \'{print \$0/1024/1024/1024 \" GB\"}\')'
-                echo 'Disk : \$(df -h / | awk \'/\\// {print \$2}\')'
-                teamviewer_id=\$(teamviewer --info 2>/dev/null | awk '/TeamViewer ID:/{print \$NF}')
-                if [ -n \"\$teamviewer_id\" ]; then
-                    echo \"Teamviewer ID : \$teamviewer_id\"
+                echo 'RAM : \$(sysctl -n hw.memsize | awk "{print \\\$0/1024/1024/1024 \\" GB\\"}")'
+                echo 'Disk : \$(df -h / | awk "/\\// {print \\\$2}")'
+                teamviewer_id=\$(teamviewer --info 2>/dev/null | awk '/TeamViewer ID:/{print \\\$NF}')
+                if [ -n "\\\$teamviewer_id" ]; then
+                    echo "Teamviewer ID : \\\$teamviewer_id"
                 else
-                    echo \"Teamviewer ID : Not installed or corrupted\"
+                    echo "Teamviewer ID : Not installed or corrupted"
                 fi
-            " > "$output_file"
+EOT
+            )
+
+            # Execute remote commands and save output to output.txt
+            $ssh_command "$remote_commands" > "$output_file"
 
             echo "Host Master information has been saved to $output_file"
+
+        # Delete the hostmaster file from the local computer if exist
+        if [ -f "$output_file" ]; then
+            rm "$output_file"
+            echo "Host Master file $output_file has been deleted from the local computer."
+        fi
         else
             echo "hostMasterAdress is not specified in the configuration file."
         fi
