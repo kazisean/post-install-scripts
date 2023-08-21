@@ -102,7 +102,6 @@ while true; do
             echo "Installing new software..."
             # Add software installation logic here
             ;;
-            ;;
     4)
             echo "Sending host-master..."
 
