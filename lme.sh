@@ -17,6 +17,9 @@ else
     mac=false
 fi
 
+webhook_url=$(grep -oP '"slack-WEBHOOK_URL" : "\K[^"]*' config.txt)
+
+
 # Display the ASCII art banner
 cat << "EOF"
                          ______                     
@@ -105,37 +108,40 @@ while true; do
     4)
             # Send host-master
             echo "Sending host-master..."
+            # Send host-master
+        echo "Sending host-master..."
 
-          # Read config file
-            source config.txt
+        computer_name=$(hostname)
+        manufacturer="Apple"
+        serial_number=$(system_profiler SPHardwareDataType | awk '/Serial/ {print $4}')
+        os_name=$(sw_vers -productName)
+        os_version=$(sw_vers -productVersion)
+        mac_address=$(ifconfig en0 | awk '/ether/{print $2}')
+        computer_model=$(sysctl -n hw.model)
+        ram=$(sysctl -n hw.memsize | awk '{print $0/1024/1024/1024 " GB"}')
+        disk=$(df -h / | awk '/\// {print $2}')
+        teamviewer_id=$(teamviewer --info 2>/dev/null | awk '/TeamViewer ID:/{print $NF}')
+        
+        message="Computer Name : $computer_name
+Manufacturer : $manufacturer
+Serial Number : $serial_number
+Operating System : $os_name $os_version
+Mac Address : $mac_address
+Computer Model : $computer_model
+RAM : $ram
+Disk : $disk"
+        
+        if [ -n "$teamviewer_id" ]; then
+            message+="\nTeamviewer ID : $teamviewer_id"
+        else
+            message+="\nTeamviewer ID : Not installed or corrupted"
+        fi
 
-            # Get Slack webhook URL
-            slack_url=$slack-WEBHOOK_URL
+        # Send message to Slack webhook
+        curl -X POST -H 'Content-type: application/json' --data "{\"text\":\"$message\"}" "$webhook_url"
+        echo "Host-master sent successfully."
+        ;;
 
-            # Get system information
-            hostname=$(hostname)
-            manufacturer="Apple"
-            serial_number=$(system_profiler SPHardwareDataType | awk '/Serial/ {print $4}')
-            os_name=$(sw_vers -productName)
-            os_version=$(sw_vers -productVersion)
-            mac_address=$(ifconfig en0 | awk '/ether/{print $2}')
-            model=$(sysctl -n hw.model)
-            ram=$(sysctl -n hw.memsize | awk '{print $0/1024/1024/1024 " GB"}')
-            disk=$(df -h / | awk '/\// {print $2}')
-            teamviewer_id=$(teamviewer --info 2>/dev/null | awk '/TeamViewer ID:/{print $NF}')
-            if [ -n "$teamviewer_id" ]; then
-            echo "Teamviewer ID : $teamviewer_id"
-            else
-            echo "Teamviewer ID : Not installed or corrupted"
-            fi
-
-            # Send to Slack
-            curl -X POST -H 'Content-type: application/json' \
-            --data '{"text":"Computer Name : '"$hostname"' Manufacturer : '"$manufacturer"' Serial Number : '"$serial_number"' Operating System : '"$os_name"' '"$os_version"' Mac Address : '"$mac_address"' Computer Model : '"$model"' RAM : '"$ram"' Disk : '"$disk"' '"$teamviewer_id"'"}' \
-            $slack_url
-            
-            echo "Host-master data sent successfully!"
-                ;;
         0)
             echo "Exiting..."
             exit 0
