@@ -98,50 +98,52 @@ while true; do
     ;;
 
       
-        3)
+    3)
             echo "Installing new software..."
             # Add software installation logic here
             ;;
-        4)
+    4)
         echo "Sending host-master..."
 
-        # Read the configuration from config.txt
-        config_file="config.txt"
-        if [ -f "$config_file" ]; then
-            hostMasterAdress=$(jq -r '.hostMasterAdress' "$config_file")
+    config_file="config.txt"
+    output_file="output.txt"
 
-            if [ -n "$hostMasterAdress" ]; then
-                echo "Enter your username for the server: "
-                read server_username
-                echo "Enter your password for the server: "
-                read -s server_password
+    if [ -f "$config_file" ]; then
+        # Read hostMasterAdress from config.txt
+        hostMasterAdress=$(grep -o '"hostMasterAdress" : "[^"]*' "$config_file" | cut -d '"' -f 4)
 
-                # Execute the commands and save output to the specified text file
-                sshpass -p "$server_password" ssh "$server_username"@"$hostMasterAdress" "
-                    echo 'Computer Name : $(hostname)'
-                    echo 'Manufacturer : Apple'
-                    echo 'Serial Number : $(system_profiler SPHardwareDataType | awk \'/Serial/ {print \$4}\')'
-                    echo 'Operating System : \$(sw_vers -productName) \$(sw_vers -productVersion)'
-                    echo 'Mac Address : \$(ifconfig en0 | awk \'/ether/{print \$2}\')'
-                    echo 'Computer Model : \$(sysctl -n hw.model)'
-                    echo 'RAM : \$(sysctl -n hw.memsize | awk \'{print \$0/1024/1024/1024 \" GB\"}\')'
-                    echo 'Disk : \$(df -h / | awk \'/\\// {print \$2}\')'
-                    teamviewer_id=\$(teamviewer --info 2>/dev/null | awk '/TeamViewer ID:/{print \$NF}')
-                    if [ -n \"\$teamviewer_id\" ]; then
-                        echo \"Teamviewer ID : \$teamviewer_id\"
-                    else
-                        echo \"Teamviewer ID : Not installed or corrupted\"
-                    fi
-                " > "$hostMasterAdress"
-                
-                echo "Hostmaster information has been saved to $hostMasterAdress"
-            else
-                echo "hostMasterAdress is not specified in the configuration file."
-            fi
+        if [ -n "$hostMasterAdress" ]; then
+            # Prompt user for server login credentials
+            read -p "Enter your server username: " server_username
+            read -s -p "Enter your server password: " server_password
+            echo
+
+            # Execute commands remote server and save output to output.txt
+            sshpass -p "$server_password" ssh "$server_username"@"$hostMasterAdress" "
+                echo 'Computer Name : \$(hostname)'
+                echo 'Manufacturer : Apple'
+                echo 'Serial Number : \$(system_profiler SPHardwareDataType | awk \'/Serial/ {print \$4}\')'
+                echo 'Operating System : \$(sw_vers -productName) \$(sw_vers -productVersion)'
+                echo 'Mac Address : \$(ifconfig en0 | awk \'/ether/{print \$2}\')'
+                echo 'Computer Model : \$(sysctl -n hw.model)'
+                echo 'RAM : \$(sysctl -n hw.memsize | awk \'{print \$0/1024/1024/1024 \" GB\"}\')'
+                echo 'Disk : \$(df -h / | awk \'/\\// {print \$2}\')'
+                teamviewer_id=\$(teamviewer --info 2>/dev/null | awk '/TeamViewer ID:/{print \$NF}')
+                if [ -n \"\$teamviewer_id\" ]; then
+                    echo \"Teamviewer ID : \$teamviewer_id\"
+                else
+                    echo \"Teamviewer ID : Not installed or corrupted\"
+                fi
+            " > "$output_file"
+
+            echo "Host Master information has been saved to $output_file"
         else
-            echo "Config file not found. Please remove the script and redownload it!!"
+            echo "hostMasterAdress is not specified in the configuration file."
         fi
-        ;;
+    else
+        echo "Config file not found. Please redownload the scripts!!"
+    fi
+    ;;
 
 
         0)
