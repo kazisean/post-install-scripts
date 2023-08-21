@@ -115,7 +115,7 @@ while true; do
                 if [ -n "$hostMasterAdress" ] && [ -n "$shareName" ]; then
                     # Prompt user for server username and password
                     read -p "Enter your server username: " server_username
-                    read -s -p "Enter your server password: " server_password
+                    read -s -p "Enter your server password:  " server_password
                     echo
 
                     # Construct the data to be sent
