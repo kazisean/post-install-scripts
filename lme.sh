@@ -17,6 +17,29 @@ else
     mac=false
 fi
 
+# Display the ASCII art banner
+cat << "EOF"
+                     ______                     
+ _________        .---"""      """---.              
+:______.-':      :  .--------------.  :             
+| ______  |      | :                : |             
+|:______B:|      | |  FAS Computing | |             
+|:______B:|      | |                | |             
+|:______B:|      | |  connection    | |             
+|         |      | |  complete.     | |             
+|:_____:  |      | |                | |             
+|    ==   |      | :                : |             
+|       O |      :  '--------------'  :             
+|       o |      :'---...______...---'              
+|       o |-._.-i___/'             \._              
+|'-.____o_|   '-.   '-...______...-'  `-._          
+:_________:      `.____________________   `-.___.-. 
+                 .'.eeeeeeeeeeeeeeeeee.'.      :___:
+               .'.eeeeeeeeeeeeeeeeeeeeee.'.         
+              :____________________________:"
+EOF
+
+
 # Display main menu
 while true; do
     echo "Lan Made Easy - Main Menu"
