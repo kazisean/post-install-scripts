@@ -104,58 +104,47 @@ while true; do
             ;;
     4)
         echo "Sending host-master..."
-    computer_name=$(hostname)
-    config_file="config.txt"
-    output_file="hostmaster-$computer_name.txt"
+            computer_name=$(hostname)
+            config_file="config.txt"
 
-    if [ -f "$config_file" ]; then
-        # Read hostMasterAdress from config.txt
-        hostMasterAdress=$(grep -o '"hostMasterAdress" : "[^"]*' "$config_file" | cut -d '"' -f 4)
+            if [ -f "$config_file" ]; then
+                # Read hostMasterAdress and ShareName from config.txt
+                hostMasterAdress=$(grep -o '"hostMasterAdress" : "[^"]*' "$config_file" | cut -d '"' -f 4)
+                shareName=$(grep -o '"ShareName" : "[^"]*' "$config_file" | cut -d '"' -f 4)
 
-        if [ -n "$hostMasterAdress" ]; then
-            # Prompt user for server username and password
-            read -p "Enter your server username: " server_username
-            read -s -p "Enter your server password: " server_password
-            echo
+                if [ -n "$hostMasterAdress" ] && [ -n "$shareName" ]; then
+                    # Prompt user for server username and password
+                    read -p "Enter your server username: " server_username
+                    read -s -p "Enter your server password: " server_password
+                    echo
 
-            # Construct and execute smbclient commands
-            smbclient_command="smbclient //$hostMasterAdress/$(grep -o '"ShareName" : "[^"]*' "$config_file" | cut -d '"' -f 4) -U $server_username%$server_password -c"
-
-           remote_commands=$(cat <<EOT
-                echo 'Computer Name : \$(hostname)'
-                echo 'Manufacturer : Apple'
-                echo 'Serial Number : \$(system_profiler SPHardwareDataType | awk "/Serial/ {print \\\$4}")'
-                echo 'Operating System : \$(sw_vers -productName) \$(sw_vers -productVersion)'
-                echo 'Mac Address : \$(ifconfig en0 | awk "/ether/{print \\\$2}")'
-                echo 'Computer Model : \$(sysctl -n hw.model)'
-                echo 'RAM : \$(sysctl -n hw.memsize | awk "{print \\\$0/1024/1024/1024 \\" GB\\"}")'
-                echo 'Disk : \$(df -h / | awk "/\\// {print \\\$2}")'
-                teamviewer_id=\$(teamviewer --info 2>/dev/null | awk '/TeamViewer ID:/{print \\\$NF}')
-                if [ -n "\\\$teamviewer_id" ]; then
-                    echo "Teamviewer ID : \\\$teamviewer_id"
-                else
-                    echo "Teamviewer ID : Not installed or corrupted"
-                fi
+                    # Construct the data to be sent
+                    data=$(cat <<EOT
+{
+    "computerName": "$(hostname)",
+    "manufacturer": "Apple",
+    "serialNumber": "$(system_profiler SPHardwareDataType | awk '/Serial/ {print $4}')",
+    "operatingSystem": "$(sw_vers -productName) $(sw_vers -productVersion)",
+    "macAddress": "$(ifconfig en0 | awk '/ether/{print $2}')",
+    "computerModel": "$(sysctl -n hw.model)",
+    "ram": "$(sysctl -n hw.memsize | awk '{print $0/1024/1024/1024 " GB"}')",
+    "disk": "$(df -h / | awk '/\// {print $2}')"
+}
 EOT
-            )
+                    )
 
-            # Execute remote commands and save output to output.txt
-            echo "$remote_commands" | $smbclient_command > "$output_file"
+                    # Send data to the server using curl
+                    curl_command="curl -X POST -u $server_username:$server_password -H 'Content-Type: application/json' -d '$data' $hostMasterAdress/$shareName"
+                    response=$(eval "$curl_command")
 
-            echo "Host Master information has been saved to $output_file"
-
-            # Delete the hostmaster file from the local computer if exist
-            if [ -f "$output_file" ]; then
-                rm "$output_file"
-                echo "Host Master file $output_file has been deleted from the local computer."
+                    echo "Response from server: $response"
+                else
+                    echo "hostMasterAdress or ShareName is not specified in the configuration file."
+                fi
+            else
+                echo "Config file not found. Please redownload the scripts!!"
             fi
-        else
-            echo "hostMasterAdress is not specified in the configuration file."
-        fi
-    else
-        echo "Config file not found. Please redownload the scripts!!"
-    fi
-    ;;
+            ;;
 
 
         0)
