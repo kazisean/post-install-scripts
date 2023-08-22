@@ -7,7 +7,14 @@
 
 scripts = (
 
-#---Enter the scripts / homebrew commands below this line
+#---Enter the scripts / homebrew commands below this line ----- #
+
+"Gooogle Chrome"
+brew install --cask google-chrome
+
+
+"VLC Media Player"
+brew install --cask vlc
 
 
 
