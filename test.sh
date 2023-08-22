@@ -1,6 +1,6 @@
 #!/bin/bash
 
-homebrew_dir="/out/homebrew"
+homebrew_dir="$HOME/out/homebrew"
 
 # Check if the directory exists
 if [ ! -d "$homebrew_dir" ]; then
