@@ -14,10 +14,12 @@ fi
 if [[ $(uname) == "Darwin" ]]; then
     mac=true
 else
-    mac=false
+    echo " "
+    echo "This Script can only be ran on a mac device!!"
+    echo " "
+    exit 1
 fi
 
-webhook_url=$(grep -oP '"slack-WEBHOOK_URL" : "\K[^"]*' config.txt)
 
 
 # Display the ASCII art banner
@@ -26,10 +28,10 @@ cat << "EOF"
  _________        .---"""      """---.              
 :______.-':      :  .--------------.  :             
 | ______  |      | :                : |             
-|:______B:|      | |  FAS Computing | |             
+|:______B:|      | |  Lan made easy | |             
 |:______B:|      | |                | |             
-|:______B:|      | |  connection    | |             
-|         |      | |  complete.     | |             
+|:______B:|      | |  by            | |             
+|         |      | |  kazi.         | |             
 |:_____:  |      | |                | |             
 |    ==   |      | :                : |             
 |       O |      :  '--------------'  :             

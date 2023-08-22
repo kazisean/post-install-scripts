@@ -1,2 +1,0 @@
-"slack-WEBHOOK_URL" : "enter-slack-webhook.url",
-"appWebsite" : "enter-your-app-website-apps.json file"
