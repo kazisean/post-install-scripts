@@ -3,34 +3,11 @@
 # Lan computer setup and maintenance script (Lan Made Easy)
 # by Kazi Hossain <kazi.h@nyu.edu>
 # License: GNU GPLv3
+# For more information about how to set this up for your need check out : ENTER READ ME LINK HERE
 
 scripts = (
 
-###############################################################################
-#
-#       add your apps / scripts below this # box
-#       use this template to help you
-#       "number to showcase in the menu"
-#       "name-of-app-or-script"
-#       "type" this can be either dmg, pkg or sh
-#       "stable-direct-download-link"  
-#   an example is given below which downloads google chrome
-#
-###############################################################################
-
-# Downloading google chrome 
-    "1"
-    "Google Chrome"
-    "dmg"
-    "https://dl.google.com/chrome/mac/universal/stable/GGRO/googlechrome.dmg"
-
-
-    "2"
-    "Google Chrome V2"
-    "dmg"
-    "https://dl.google.com/chrome/mac/universal/stable/GGRO/googlechrome.dmg"
-
-
+#---Enter the scripts / homebrew commands below this line
 
 
 
@@ -39,6 +16,59 @@ scripts = (
 
 
 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -85,6 +115,9 @@ EOF
 echo "  " 
 echo "  " 
 echo "  " 
+# Installing homebrew and place in path so commands can be used in the terminal
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
 
 
 
