@@ -4,6 +4,18 @@
 if ! command -v brew &> /dev/null; then
     echo "Brew not found. Installing..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    
+    # Exit the script if Brew installation fails
+    if [ $? -ne 0 ]; then
+        echo "Brew installation failed. Exiting..."
+        exit 1
+    fi
+fi
+
+# Check if path is set correctly
+if ! command -v brew &> /dev/null; then
+    echo "Brew is still not found. Unable to set path. Exiting..."
+    exit 1
 fi
 
 # Array of scripts
@@ -15,7 +27,13 @@ scripts=(
     "VLC Media Player" 
     "brew install --cask vlc"
 
-    
+    "TeamViewer Host"
+    "brew install --cask teamviewer-host"
+
+    "TeamViewer for admins"
+    "brew install --cask teamviewer"
+
+
     # Add more scripts in the same format
 )
 
