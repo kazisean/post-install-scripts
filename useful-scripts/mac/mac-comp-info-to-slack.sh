@@ -1,5 +1,7 @@
 #!/bin/bash
 
+## This script can be used to store important computer information in a slack server. For more information read : READING LINK THIS SCRIPT ADD
+
 # ENTER YOUR Slack webhook URL!!!
 webhook_url="ENTER-YOUR-OWN-SLACK-WEEBHOOK-URL-HERE"
 
