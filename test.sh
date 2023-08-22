@@ -1,23 +1,16 @@
 #!/bin/bash
 
-# Try to put Homebrew in path
-step_1='echo; echo "eval \"\$(/opt/homebrew/bin/brew shellenv)\"" >> "/Users/$(whoami)/.zprofile"'
-step_2='eval "$(/opt/homebrew/bin/brew shellenv)"'
+# Append Homebrew shell environment setup to .zprofile
+(echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> /Users/$(whoami)/.zprofile
 
-# Run step 1 and check for errors
-if ! eval "$step_1"; then
-    echo "Adding Homebrew to PATH failed."
-    if ! eval "$step_2"; then
-        echo "Running step 2 failed. Downloading and installing Homebrew..."
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-        eval "$step_2"
+# Try running Homebrew shell environment setup
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
-        # Reload the modified .zprofile
-        source "/Users/$(whoami)/.zprofile"
-    else
-        echo "Homebrew is already in PATH."
-    fi
+
+if [ $? -ne 0 ]; then
+    # If the previous command failed, install Homebrew
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" > /dev/null 2>&1 &
+    
+    # Quit the terminal after installing Homebrew
+    osascript -e 'tell application "Terminal" to quit'
 fi
-
-# Reload the terminal
-exec "$SHELL"
