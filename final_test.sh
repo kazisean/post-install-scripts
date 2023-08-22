@@ -6,7 +6,10 @@
 # For more information about how to set this up for your need check out : ENTER READ ME LINK HERE
 
 # change this app list to your own app list txt file. It is currently set to the default list from the git repo
-app_list = ""
+app_list = "https://raw.githubusercontent.com/kazisean/Lan-made-easy/main/useful-scripts/mac/homebrew/default_list.txt"
+
+# change this shell list to your own app list txt file. It is currently set to the default list from the git repo
+shell_list = 
 
 
 

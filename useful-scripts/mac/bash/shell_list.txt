@@ -1,0 +1,8 @@
+Change Computer Name 
+https://raw.githubusercontent.com/kazisean/Lan-made-easy/main/useful-scripts/mac/bash/change-computer-name.sh
+
+Create a User Account 
+https://raw.githubusercontent.com/kazisean/Lan-made-easy/main/useful-scripts/mac/bash/create-user-account.sh
+
+Send Computer Info to Slack
+https://raw.githubusercontent.com/kazisean/Lan-made-easy/main/useful-scripts/mac/bash/comp-info-to-slack.sh
