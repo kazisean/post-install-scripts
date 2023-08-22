@@ -12,7 +12,7 @@ scripts = (
 #       use this template to help you
 #       "number to showcase in the menu"
 #       "name-of-app-or-script"
-#       "type"
+#       "type" this can be either dmg, pkg or sh
 #       "stable-direct-download-link"  
 #   an example is given below which downloads google chrome
 #
@@ -25,6 +25,11 @@ scripts = (
     "https://dl.google.com/chrome/mac/universal/stable/GGRO/googlechrome.dmg"
 
 
+    "2"
+    "Google Chrome V2"
+    "dmg"
+    "https://dl.google.com/chrome/mac/universal/stable/GGRO/googlechrome.dmg"
+
 
 
 
@@ -34,144 +39,6 @@ scripts = (
 
 
 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -218,5 +85,7 @@ EOF
 echo "  " 
 echo "  " 
 echo "  " 
+
+
 
 done
