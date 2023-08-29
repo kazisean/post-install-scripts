@@ -21,3 +21,6 @@ elif [[ $choice == "2" ]]; then
 else
     echo "Invalid choice. Exiting."
 fi
+
+# Script ends automatically after completion
+exit

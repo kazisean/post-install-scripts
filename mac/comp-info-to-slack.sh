@@ -28,3 +28,6 @@ if [ "$response" = "ok" ]; then
 else
   echo "Failed to send computer information to Slack."
 fi
+
+# Script ends automatically after completion
+exit 0

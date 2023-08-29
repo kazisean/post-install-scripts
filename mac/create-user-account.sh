@@ -1,8 +1,7 @@
 #!/bin/bash
 
-## This script can be used to add a user account 
+## This script can be used to add a user account
 ## Make sure to set your default account password in line 49 (SETDEFAULTPASSWORD="YourDefaultPassword")
-
 
 # Check if the script is being run as root
 if [ "$EUID" -ne 0 ]; then
@@ -69,3 +68,6 @@ case $choice in
         exit 1
         ;;
 esac
+
+# Script ends automatically after completion
+exit 0

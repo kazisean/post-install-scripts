@@ -43,3 +43,5 @@ else
 fi
 
 echo "MacOS is up to date. Currently running $(sw_vers -productName) $(sw_vers -productVersion)"
+
+exit 0

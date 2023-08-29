@@ -21,3 +21,6 @@ if [ $install_status -eq 0 ]; then
 else
     echo "Chrome installation failed."
 fi
+
+# Script ends automatically after completion
+exit 0
