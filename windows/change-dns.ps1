@@ -14,3 +14,20 @@ foreach ($adapter in $ethernetAdapters) {
         Write-Host "Ethernet adapter $($adapter.Name) is not connected, skipping..."
     }
 }
+
+# Print out the current DNS after switch
+$ipconfigOutput = ipconfig /all
+
+$dnsLines = $ipconfigOutput | Select-String -Pattern "DNS Servers"
+
+$ipv4DnsLines = $dnsLines | Where-Object { $_.Line -match "IPv4 Address" }
+
+if ($ipv4DnsLines) {
+    Write-Host "IPv4 DNS Servers for Ethernet:"
+    foreach ($line in $ipv4DnsLines) {
+        $dnsServer = $line.Line -replace ".*: ", ""
+        Write-Host "  $dnsServer"
+    }
+} else {
+    Write-Host "No IPv4 DNS servers found for Ethernet most likely because computer is using ipv6 DNS servers"
+}
