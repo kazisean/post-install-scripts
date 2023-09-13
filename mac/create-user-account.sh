@@ -41,8 +41,9 @@ case $choice in
         echo "Enter Full Name for the new user account:"
         read full_name
 
-        # Remove spaces and convert to lowercase for the Account Name
-        account_name=$(echo "$full_name" | tr ' ' '_' | tr '[:upper:]' '[:lower:]')
+        # Prompt the user to enter an account name
+        echo "Enter an Account Name for the new user account (netID):"
+        read account_name
 
         # Set a default password
         SETDEFAULTPASSWORD="YourDefaultPassword"
