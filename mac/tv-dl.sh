@@ -1,5 +1,6 @@
 #!/bin/zsh
 
+# This script automatically downloads teamviewer from the official link and installs it in the background while giving the rightful permissions 
 # Written by: Kazi Hossain
 # Source : https://github.com/kazisean/Lan-made-easy
 
