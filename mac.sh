@@ -30,7 +30,6 @@ EOF
 
 
 # Run this script as admin
-echo "aa"
 sudo -v
 
 # Check if the script is being run as root
@@ -38,6 +37,7 @@ if [ "$EUID" -ne 0 ]; then
     echo "Please run this script as root (admin)."
     exit 1
 fi
+
 
 
 
